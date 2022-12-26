@@ -22,8 +22,8 @@ namespace Task1
         public FileData()
         {
             Date = GetRandomDate();
-            EngBundle = GetRandomString(_engAlphanumericCharacters);
-            RusBundle = GetRandomString(_rusAlphabet);
+            EngBundle = GetRandomString(_engAlphanumericCharacters, 10);
+            RusBundle = GetRandomString(_rusAlphabet, 10);
             IntValue = GetRandomInt(100000000);
             FloatValue = GetRandomFloat();
         }
@@ -59,10 +59,10 @@ namespace Task1
             return date.AddDays(rand);
         }
 
-        private string GetRandomString(string sequence)
+        private string GetRandomString(string sequence, int length)
         {
             var random = new Random();
-            return new string(Enumerable.Repeat(sequence, sequence.Length).Select(s => s[random.Next(sequence.Length)]).ToArray());
+            return new string(Enumerable.Repeat(sequence, length).Select(s => s[random.Next(sequence.Length)]).ToArray());
         }
 
         private int GetRandomInt(int max)

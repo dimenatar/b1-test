@@ -1,7 +1,11 @@
+using System.ComponentModel;
+
 namespace Task1
 {
     public partial class Form1 : Form
     {
+        private ProgressForm _progressForm;
+
         public Form1()
         {
             InitializeComponent();
@@ -51,8 +55,15 @@ namespace Task1
                 {
                     var files = fileBrowserDG.FileNames;
 
+                    _progressForm = new ProgressForm(0, FileDataManager.GetLineAmount(files));
+                    Action<int> valueUpdated = (value) => _progressForm.Invoke((MethodInvoker)delegate { _progressForm.UpdateValue(value); });
+
                     var importer = new FileToBDImporter(serverValue.Text, int.Parse(portValue.Text), usernameValue.Text, passwordValue.Text, databaseValue.Text, tableValue.Text);
-                    importer.Import(files);
+
+                    _progressForm.Show();
+
+                    Thread thread = new Thread(t => importer.Import(files, valueUpdated, () => _progressForm.Invoke((MethodInvoker)delegate { _progressForm.Close(); })));
+                    thread.Start();
                 }
             }
         }

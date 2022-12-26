@@ -30,7 +30,7 @@ namespace Task1
             _tableName = tableName;
         }
 
-        public void Import(string[] files)
+        public void Import(string[] files, Action<int> valueUpdated = null, Action errorFired = null)
         {
             var data = FileDataManager.GetDataFromFiles(files);
 
@@ -41,19 +41,25 @@ namespace Task1
                 MySqlCommand command = new MySqlCommand();
                 command.Connection = _connection;
 
+                command.Parameters.Add("RandInt", MySqlDbType.Int32).Value = 0;
+                command.Parameters.Add("RandSingle", MySqlDbType.Float).Value = 0f;
                 for (int i = 0; i < data.Count; i++)
                 {
                     command.CommandText = $"INSERT INTO {_tableName} values (default, '{data[i].GetDate()}', '{data[i].EngBundle}', '{data[i].RusBundle}', '@RandInt', @'RandSingle');";
-                    command.Parameters.Add("RandInt", MySqlDbType.Int32).Value = data[i].IntValue;
-                    command.Parameters.Add("RandSingle", MySqlDbType.Float).Value = data[i].FloatValue;
+                    command.Parameters[0].Value = data[i].IntValue;
+                    command.Parameters[1].Value = data[i].FloatValue;
                     command.ExecuteNonQuery();
+
+                    valueUpdated?.Invoke(i+1);
                 }
                 
                 MessageBox.Show("Success!");
             }
             catch (Exception ex)
             {
+                errorFired?.Invoke();
                 MessageBox.Show(ex.Message);
+
             }
             finally
             {

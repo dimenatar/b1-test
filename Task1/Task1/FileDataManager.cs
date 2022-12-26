@@ -131,5 +131,15 @@ namespace Task1
                 .Where(c => !Char.IsWhiteSpace(c))
                 .ToArray());
         }
+
+        public static int GetLineAmount(string[] paths)
+        {
+            return paths.ToList().Sum(path => GetLineAmount(path));
+        }
+
+        public static int GetLineAmount(string path)
+        {
+            return File.Exists(path) ? File.ReadAllText(path).Split('\n').Where(line => !string.IsNullOrEmpty(line)).Count() : 0;
+        }
     }
 }

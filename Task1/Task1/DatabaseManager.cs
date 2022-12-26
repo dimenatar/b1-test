@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Task1
 {
-    internal class FileToBDImporter
+    internal class DatabaseManager
     {
         private MySqlConnection _connection;
 
@@ -18,7 +18,7 @@ namespace Task1
         private string _database;
         private string _tableName;
 
-        public FileToBDImporter(string server, int port, string userName, string password, string database, string tableName)
+        public DatabaseManager(string server, int port, string userName, string password, string database, string tableName)
         {
             _server = server;
             _port = port;
@@ -45,7 +45,7 @@ namespace Task1
                 command.Parameters.Add("RandSingle", MySqlDbType.Float).Value = 0f;
                 for (int i = 0; i < data.Count; i++)
                 {
-                    command.CommandText = $"INSERT INTO {_tableName} values (default, '{data[i].GetDate()}', '{data[i].EngBundle}', '{data[i].RusBundle}', '@RandInt', @'RandSingle');";
+                    command.CommandText = $"INSERT INTO {_tableName} values (default, '{data[i].GetDate()}', '{data[i].EngBundle}', '{data[i].RusBundle}', @'RandInt', @'RandSingle');";
                     command.Parameters[0].Value = data[i].IntValue;
                     command.Parameters[1].Value = data[i].FloatValue;
                     command.ExecuteNonQuery();
@@ -60,6 +60,50 @@ namespace Task1
                 errorFired?.Invoke();
                 MessageBox.Show(ex.Message);
 
+            }
+            finally
+            {
+                _connection.Close();
+            }
+        }
+
+        public ulong GetSum()
+        {
+            _connection.Open();
+
+            try
+            {
+                MySqlCommand command = new MySqlCommand();
+                command.Connection = _connection;
+                command.CommandText = $"SELECT SUM(RandInt) FROM {_tableName}";
+                return Convert.ToUInt64(command.ExecuteScalar());
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message);
+                return 0;
+            }
+            finally 
+            { 
+                _connection.Close(); 
+            }
+        }
+
+        public float GetAvg()
+        {
+            _connection.Open();
+
+            try
+            {
+                MySqlCommand command = new MySqlCommand();
+                command.Connection = _connection;
+                command.CommandText = $"SELECT AVG(RandSingle) FROM {_tableName}";
+                return Convert.ToSingle(command.ExecuteScalar());
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+                return 0;
             }
             finally
             {

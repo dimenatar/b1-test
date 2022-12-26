@@ -46,6 +46,8 @@
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.button3 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
+            this.button5 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -195,11 +197,33 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(953, 43);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(122, 23);
+            this.button4.TabIndex = 4;
+            this.button4.Text = "Get sum from db";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(953, 91);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(122, 23);
+            this.button5.TabIndex = 4;
+            this.button5.Text = "Get median from db";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1087, 334);
+            this.Controls.Add(this.button5);
+            this.Controls.Add(this.button4);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label6);
@@ -244,5 +268,7 @@
         private Label label6;
         private Label label7;
         private Button button3;
+        private Button button4;
+        private Button button5;
     }
 }

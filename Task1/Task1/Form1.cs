@@ -58,14 +58,26 @@ namespace Task1
                     _progressForm = new ProgressForm(0, FileDataManager.GetLineAmount(files));
                     Action<int> valueUpdated = (value) => _progressForm.Invoke((MethodInvoker)delegate { _progressForm.UpdateValue(value); });
 
-                    var importer = new FileToBDImporter(serverValue.Text, int.Parse(portValue.Text), usernameValue.Text, passwordValue.Text, databaseValue.Text, tableValue.Text);
+                    var databaseManager = new DatabaseManager(serverValue.Text, int.Parse(portValue.Text), usernameValue.Text, passwordValue.Text, databaseValue.Text, tableValue.Text);
 
                     _progressForm.Show();
 
-                    Thread thread = new Thread(t => importer.Import(files, valueUpdated, () => _progressForm.Invoke((MethodInvoker)delegate { _progressForm.Close(); })));
+                    Thread thread = new Thread(t => databaseManager.Import(files, valueUpdated, () => _progressForm.Invoke((MethodInvoker)delegate { _progressForm.Close(); })));
                     thread.Start();
                 }
             }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            var databaseManager = new DatabaseManager(serverValue.Text, int.Parse(portValue.Text), usernameValue.Text, passwordValue.Text, databaseValue.Text, tableValue.Text);
+            MessageBox.Show(databaseManager.GetAvg().ToString());
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            var databaseManager = new DatabaseManager(serverValue.Text, int.Parse(portValue.Text), usernameValue.Text, passwordValue.Text, databaseValue.Text, tableValue.Text);
+            MessageBox.Show(databaseManager.GetSum().ToString());
         }
     }
 }

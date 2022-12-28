@@ -10,6 +10,19 @@
         @ViewBag.Message
     </div>
     <div>
+        Uploaded files:
+        @{
+            var files = ViewData["Files"] as List<string>;
+        }
+        @if (files != null)
+        {
+            @foreach (var file in files)
+            {
+                <div>
+                    @file<br>
+                </div>
+            }
+        }
 
     </div>
 }

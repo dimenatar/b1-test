@@ -46,9 +46,11 @@ namespace FileUpload.Controllers
                     }
                     _fileNames.Add(_FileName);
 
-                    ExcelToBDParser.SendExcelToDB(ExcelToBDParser.Parse(_path, _FileName));
+                    //ExcelToBDParser.SendExcelToDB(ExcelToBDParser.Parse(_path, _FileName));
                 }
                 ViewBag.Message = "File Uploaded Successfully!!";
+
+                ViewData["Files"] = _fileNames;
 
                 return View(_fileNames);
             }

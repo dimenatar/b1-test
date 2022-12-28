@@ -73,8 +73,7 @@ namespace Task2.Scripts
                         command.ExecuteNonQuery();
                         command.CommandText = "SELECT LAST_INSERT_ID()";
                         insertedOutcomeID = Convert.ToInt32(command.ExecuteScalar());
-
-                        command.CommandText = $"INSERT INTO `record` VALUE (default, '{row.number}', (SELECT ID FROM class WHERE ClassOrder = {rowclass.Class}), '{insertedIncomeID}', '{insertedTurnID}', '{insertedOutcomeID}')";
+                         command.CommandText = $"INSERT INTO `record` VALUE (default, '{row.number}', (SELECT ID FROM class WHERE ClassOrder = {rowclass.Class}), '{insertedIncomeID}', '{insertedTurnID}', '{insertedOutcomeID}')";
                         command.ExecuteNonQuery();
                     }
                 }

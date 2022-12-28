@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web;
+using Task2.Scripts;
 
 namespace FileUpload.Controllers
 {
@@ -44,6 +45,8 @@ namespace FileUpload.Controllers
                         file.CopyTo(fileStream);
                     }
                     _fileNames.Add(_FileName);
+
+                    ExcelToBDParser.SendExcelToDB(ExcelToBDParser.Parse(_path, _FileName));
                 }
                 ViewBag.Message = "File Uploaded Successfully!!";
 

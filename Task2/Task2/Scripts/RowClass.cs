@@ -2,50 +2,50 @@
 {
     public class RowClass
     {
-        private List<Row> _rows;
+        public List<Row> Rows { get; }
 
         public int Class { get; private set; }
 
         public RowClass(int rowClass)
         {
-            _rows = new List<Row>();
+            Rows = new List<Row>();
 
             Class = rowClass;
         }
 
         public void AddRow(Row row)
         {
-            _rows.Add(row);
+            Rows.Add(row);
         }
 
-        public long GetActiveIncomeSum()
+        public double GetActiveIncomeSum()
         {
-            return _rows.Select(row => row.activeIncome).Sum();
+            return Rows.Select(row => row.activeIncome).Sum();
         }
 
-        public long GetPassiveIncomeSum()
+        public double GetPassiveIncomeSum()
         {
-            return _rows.Select(row => row.passiveIncome).Sum();
+            return Rows.Select(row => row.passiveIncome).Sum();
         }
 
-        public long GetDebetSum()
+        public double GetDebetSum()
         {
-            return _rows.Select(row => row.debet).Sum();
+            return Rows.Select(row => row.debet).Sum();
         }
 
-        public long GetCreditSum()
+        public double GetCreditSum()
         {
-            return _rows.Select(row => row.credit).Sum();
+            return Rows.Select(row => row.credit).Sum();
         }
 
-        public long GetActiveOutcomeSum()
+        public double GetActiveOutcomeSum()
         {
-            return _rows.Select(row => row.activeOutcome).Sum();
+            return Rows.Select(row => row.activeOutcome).Sum();
         }
 
-        public long GetPassiveOutcomeSum()
+        public double GetPassiveOutcomeSum()
         {
-            return _rows.Select(row => row.passiveOutcome).Sum();
+            return Rows.Select(row => row.passiveOutcome).Sum();
         }
     }
 }

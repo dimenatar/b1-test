@@ -1,6 +1,6 @@
 ﻿namespace Task2.Scripts
 {
-    public record Row(long activeIncome, long passiveIncome, long debet, long credit, long activeOutcome, long passiveOutcome)
+    public record Row(double number, double activeIncome, double passiveIncome, double debet, double credit, double activeOutcome, double passiveOutcome)
     {
 
     }

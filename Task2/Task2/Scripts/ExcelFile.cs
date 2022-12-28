@@ -15,5 +15,10 @@
         {
             _classes.Add(row);
         }
+
+        public List<RowClass> GetClasses()
+        {
+            return _classes;
+        }
     }
 }

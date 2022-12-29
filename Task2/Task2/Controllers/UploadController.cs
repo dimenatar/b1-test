@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web;
+using Task2.Models;
 using Task2.Scripts;
 
 namespace FileUpload.Controllers
@@ -12,7 +13,6 @@ namespace FileUpload.Controllers
     {
         private IWebHostEnvironment _env;
         private List<string> _fileNames;
-        // GET: Upload
 
         public UploadController(IWebHostEnvironment env)
         {
@@ -22,6 +22,17 @@ namespace FileUpload.Controllers
 
         public ActionResult Index()
         {
+            return View();
+        }
+
+        public IActionResult ExcelPresentation()
+        {
+            var a = TempData["Files"];
+            if (a != null)
+            {
+                var b = a as IEnumerable<string>;
+                return View(new ExcelPresentationModel { UploadedFiles = b.ToList() });
+            }
             return View();
         }
 
@@ -51,7 +62,7 @@ namespace FileUpload.Controllers
                 ViewBag.Message = "File Uploaded Successfully!!";
 
                 ViewData["Files"] = _fileNames;
-
+                TempData["Files"] = _fileNames;
                 return View(_fileNames);
             }
             catch (Exception ex) 

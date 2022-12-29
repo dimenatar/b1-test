@@ -1,0 +1,7 @@
+﻿namespace Task2.Models
+{
+    public class ExcelPresentationModel
+    {
+        public List<string> UploadedFiles { get; set; } = new List<string>();
+    }
+}

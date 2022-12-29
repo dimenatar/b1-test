@@ -3,7 +3,7 @@ using MySqlConnector;
 
 namespace Task2.Scripts
 {
-    public static class ExcelToBDParser
+    public static class ExcelParser
     {
         public static ExcelFile Parse(string path, string fileName)
         {
@@ -29,7 +29,7 @@ namespace Task2.Scripts
                     else if (!double.TryParse(rows[i].Cell(2).Value.ToString(), out double value2))
                     {
                         classIndex++;
-                        excelFile.AddRow(rowClass);
+                        excelFile.AddRowClass(rowClass);
                         rowClass = new RowClass(classIndex);
                     }
                 }
@@ -44,10 +44,15 @@ namespace Task2.Scripts
             {
                 connection.Open();
                 var data = excelFile.GetClasses();
-                int insertedIncomeID, insertedOutcomeID, insertedTurnID;
+                int insertedIncomeID, insertedOutcomeID, insertedTurnID, insertedFileID;
 
                 MySqlCommand command = new MySqlCommand();
                 command.Connection = connection;
+
+                command.CommandText = $"INSERT INTO `files` value (default, '{excelFile.FileName}')";
+                command.ExecuteNonQuery();
+                command.CommandText = "SELECT LAST_INSERT_ID()";
+                insertedFileID = Convert.ToInt32(command.ExecuteScalar());
 
 
                 for (int i = 0; i < data.Count; i++)
@@ -73,11 +78,53 @@ namespace Task2.Scripts
                         command.ExecuteNonQuery();
                         command.CommandText = "SELECT LAST_INSERT_ID()";
                         insertedOutcomeID = Convert.ToInt32(command.ExecuteScalar());
-                         command.CommandText = $"INSERT INTO `record` VALUE (default, '{row.number}', (SELECT ID FROM class WHERE ClassOrder = {rowclass.Class}), '{insertedIncomeID}', '{insertedTurnID}', '{insertedOutcomeID}')";
+                         command.CommandText = $"INSERT INTO `record` VALUE (default, '{row.number}', (SELECT ID FROM class WHERE ClassOrder = {rowclass.Class}), '{insertedIncomeID}', '{insertedTurnID}', '{insertedOutcomeID}', '{insertedFileID}')";
                         command.ExecuteNonQuery();
                     }
                 }
             }
+        }
+
+        public static ExcelFile GetDataFromDB(string fileName)
+        {
+            ExcelFile excelFile = new ExcelFile(fileName);
+
+            using (MySqlConnection connection = new MySqlConnection("server=localhost;port=3306;username=root;password=;database=task2"))
+            {
+                connection.Open();
+
+                MySqlCommand command = new MySqlCommand();
+                command.Connection = connection;
+
+
+                // this awful query
+                command.CommandText = $"SELECT record.BankAccNumber, incomebalance.Active, incomebalance.Passive, turns.Debit, turns.Credit, outcomebalance.Active, outcomebalance.Passive FROM record inner join incomebalance on incomebalance.ID = record.IncomeBalanceID inner join turns on record.TurnsID = turns.ID INNER join outcomebalance on record.OutcomeBalanceID = outcomebalance.ID INNER join files on files.ID = record.FileID WHERE files.FileName like '{fileName}';";
+                MySqlDataReader reader = command.ExecuteReader();
+                int rowClassIndex = 1;
+
+                RowClass rowClass = new RowClass(rowClassIndex);
+
+                while (reader.Read())
+                {
+                    Row row = new Row(reader.GetDouble(0), reader.GetDouble(1), reader.GetDouble(2), reader.GetDouble(3), reader.GetDouble(4), reader.GetDouble(5), reader.GetDouble(6));
+
+                    command.CommandText = $"SELECT ClassOrder FROM class where ID = {reader.GetInt32("ClassID")};";
+                    int currentRowClassIndex = Convert.ToInt32(command.ExecuteScalar());
+
+                    if (currentRowClassIndex > rowClassIndex)
+                    {
+                        excelFile.AddRowClass(rowClass);
+
+                        rowClassIndex++;
+                        rowClass = new RowClass(rowClassIndex);
+                    }
+
+                    rowClass.AddRow(row);
+
+                }
+            }
+
+            return excelFile;
         }
 
         public static bool IsNumber(this object value)
@@ -96,5 +143,5 @@ namespace Task2.Scripts
         }
     }
 
-
+    //SELECT record.BackAccNumber, incomebalance.Active, incomebalance.Passive, turns.Debit, turns.Credit, outcomebalance.Active, outcome.Passive FROM record inner join on incomebalance.ID = record.IncomeBalanceID inner join turns on record.TurnsID = turns.ID INNER join outcomebalance on record.OutcomeBalanceID = outcomebalance.ID INNER join files on files.ID = record.FileID WHERE files.FileName like 'test';
 }

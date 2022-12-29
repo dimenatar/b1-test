@@ -5,13 +5,15 @@
         private string _fileName;
         private List<RowClass> _classes;
 
+        public string FileName => _fileName;
+
         public ExcelFile(string fileName)
         {
             _classes = new List<RowClass>();
             _fileName = fileName;
         }
 
-        public void AddRow(RowClass row)
+        public void AddRowClass(RowClass row)
         {
             _classes.Add(row);
         }

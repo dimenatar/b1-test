@@ -20,3 +20,35 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+table, th, td {
+    border: 1px solid;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid;
+}
+
+.table-header{
+    width: 100%;
+    align-content: center;
+    align-self: center;
+    text-align:center;
+}
+
+.textButton{
+    border:double;
+    cursor: pointer;
+    width: 400px;
+    height:100px;
+    align-content:center;
+    align-items:center;
+    align-self:center;
+    margin: 10px 10px 10px 10px;
+}
+
+.text-holder{
+    width:400px;
+    height:100px;
+}

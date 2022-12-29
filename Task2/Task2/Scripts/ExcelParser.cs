@@ -98,7 +98,7 @@ namespace Task2.Scripts
 
 
                 // this awful query
-                command.CommandText = $"SELECT record.BankAccNumber, incomebalance.Active, incomebalance.Passive, turns.Debit, turns.Credit, outcomebalance.Active, outcomebalance.Passive FROM record inner join incomebalance on incomebalance.ID = record.IncomeBalanceID inner join turns on record.TurnsID = turns.ID INNER join outcomebalance on record.OutcomeBalanceID = outcomebalance.ID INNER join files on files.ID = record.FileID WHERE files.FileName like '{fileName}';";
+                command.CommandText = $"SELECT record.BankAccNumber, incomebalance.Active, incomebalance.Passive, turns.Debit, turns.Credit, outcomebalance.Active, outcomebalance.Passive, class.ClassOrder FROM record inner join incomebalance on incomebalance.ID = record.IncomeBalanceID inner join turns on record.TurnsID = turns.ID INNER join outcomebalance on record.OutcomeBalanceID = outcomebalance.ID INNER join files on files.ID = record.FileID INNER JOIN class on record.ClassID = class.ID WHERE files.FileName like '{fileName}';";
                 MySqlDataReader reader = command.ExecuteReader();
                 int rowClassIndex = 1;
 
@@ -106,10 +106,10 @@ namespace Task2.Scripts
 
                 while (reader.Read())
                 {
-                    Row row = new Row(reader.GetDouble(0), reader.GetDouble(1), reader.GetDouble(2), reader.GetDouble(3), reader.GetDouble(4), reader.GetDouble(5), reader.GetDouble(6));
+                    Row row = new Row(reader.GetInt32(0), reader.GetDouble(1), reader.GetDouble(2), reader.GetDouble(3), reader.GetDouble(4), reader.GetDouble(5), reader.GetDouble(6));
 
-                    command.CommandText = $"SELECT ClassOrder FROM class where ID = {reader.GetInt32("ClassID")};";
-                    int currentRowClassIndex = Convert.ToInt32(command.ExecuteScalar());
+                    //command.CommandText = $"SELECT ClassOrder FROM class where ID = {reader.GetInt32(7)};";
+                    int currentRowClassIndex = reader.GetInt32(7);
 
                     if (currentRowClassIndex > rowClassIndex)
                     {

@@ -1,28 +1,35 @@
 ﻿@model Task2.Models.ExcelPresentationModel
-
-<header>
     <h2>Tap on file name to preview data from db</h2>
-</header>
 
 <script>
 function f(fileName)
 {
-    console.log(fileName);
-        //DotNet.invokeMethod("Task2", "CalculateSquareRoot", parseString(fileName))
-        //    .then(result => 
-        //        {
-        //            console.log(result);
-        //        });
+    var convertedFile = JSON.stringify({name:fileName});
+        console.log(convertedFile);
+        var fff = {};
+        fff.name = String(fileName);
+        console.log(fff);
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("GetFile", "ExcelPresentation")',
+            contentType: "application/json; charset=utf-8",
+            //data: { "name": 'fileName' }, //json,
+            //data: { "name": 'fileName' },
+            data: JSON.stringify(fff),
+            dataType: "json",
+            success: function (response) {
+                alert(response);
+            }
+        });
 }
 </script>
-
-<body>
+<script src="_framework/blazor.webassembly.js"></script>
 
 <div>
 
         @foreach (var item in @Model.UploadedFiles)
         {
-            <div>
+            <div class="button-item">
 
                <asp:Button id="Button1"
                Cssclass = "textButton"
@@ -55,4 +62,3 @@ function f(fileName)
         </table>
       
 </div>
-</body>

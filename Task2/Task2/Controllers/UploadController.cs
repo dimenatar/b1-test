@@ -33,7 +33,7 @@ namespace FileUpload.Controllers
                 var b = a as IEnumerable<string>;
                 return View(new ExcelPresentationModel { UploadedFiles = b.ToList() });
             }
-            return View();
+            return View(new ExcelPresentationModel { UploadedFiles = new List<string>()});
         }
 
         [HttpGet]
@@ -57,7 +57,7 @@ namespace FileUpload.Controllers
                     }
                     _fileNames.Add(_FileName);
 
-                    //ExcelToBDParser.SendExcelToDB(ExcelToBDParser.Parse(_path, _FileName));
+                    //ExcelParser.SendExcelToDB(ExcelParser.Parse(_path, _FileName));
                 }
                 ViewBag.Message = "File Uploaded Successfully!!";
 

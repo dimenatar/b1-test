@@ -16,16 +16,12 @@ namespace Task2.Scripts
                 var cells = sheet.Cells;
                 int classIndex = 1;
 
-                //var rowClassName = rows[8].Cell(1).Value.ToString();
-                var cell = sheet.Cells[8, 0];
                 var rowClassName = sheet.Cells[8, 0].Value.ToString();
 
                 RowClass rowClass = new RowClass(classIndex, rowClassName.Substring(rowClassName.IndexOf(rowClassName.LastOrDefault(c => c >= '0' && c <= '9'))+2));
 
                 for (int i = 9; i < rowCount; i++)
                 {
-                    var c = cells.Rows[i];
-
                     if (double.TryParse(cells[i, 0].Value.ToString(), out double value1))
                     {
                         Row row = new Row(GetTruncatedValue(cells[i, 0].Value), GetTruncatedValue(cells[i, 1].Value), GetTruncatedValue(cells[i, 2].Value), GetTruncatedValue(cells[i, 3].Value), GetTruncatedValue(cells[i, 4].Value), GetTruncatedValue(cells[i, 5].Value), GetTruncatedValue(sheet.Cells[i, 6].Value));
@@ -75,7 +71,6 @@ namespace Task2.Scripts
 
                 for (int i = 0; i < classes.Count; i++)
                 {
-                    //insert income
                     var rowclass = classes[i];
 
                     for (int j = 0; j < rowclass.Rows.Count; j++)

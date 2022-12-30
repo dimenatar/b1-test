@@ -35,6 +35,11 @@ th, td {
     align-content: center;
     align-self: center;
     text-align:center;
+    border: 1px solid;
+}
+
+.table-header.row{
+    border: 1px solid;
 }
 
 .textButton{

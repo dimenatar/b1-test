@@ -26,7 +26,7 @@ namespace Task2.Scripts
 
                     if (double.TryParse(rows[i].Cell(1).Value.ToString(), out double value1))
                     {
-                        Row row = new Row(Convert.ToDouble(rows[i].Cell(1).Value), Convert.ToDouble(rows[i].Cell(2).Value), Convert.ToDouble(rows[i].Cell(3).Value), Convert.ToDouble(rows[i].Cell(4).Value), Convert.ToDouble(rows[i].Cell(5).Value), Convert.ToDouble(rows[i].Cell(6).Value), Convert.ToDouble(rows[i].Cell(7).Value));
+                        Row row = new Row(GetTruncatedValue(rows[i].Cell(1).Value), GetTruncatedValue(rows[i].Cell(2).Value), GetTruncatedValue(rows[i].Cell(3).Value), GetTruncatedValue(rows[i].Cell(4).Value), GetTruncatedValue(rows[i].Cell(5).Value), GetTruncatedValue(rows[i].Cell(6).Value), GetTruncatedValue(rows[i].Cell(7).Value));
                         rowClass.AddRow(row);
                     }
                     else if (!double.TryParse(rows[i].Cell(2).Value.ToString(), out double value2))

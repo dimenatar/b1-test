@@ -56,20 +56,20 @@ function f(fileName)
     
 </div>
 <div class="table-header">
-    <table align="center" width="100%">
+    <table align="center" width="100%" class="table-header">
         <tr>
-            <th colspan="3">Входящее сальдо</th>
-            <th colspan="2">Обороты</th>
-            <th colspan="2">Исходящее сальдо</th>
+            <th colspan="3" class="table-header.row"><b>Входящее сальдо</b></th>
+            <th colspan="2"><b>Обороты</b></th>
+            <th colspan="2"><b>Исходящее сальдо</b></th>
         </tr>
         <tr>
-            <th>Б/сч</th>
-            <th>Актив</th>
-            <th>Пассив</th>
-            <th>Дебет</th>
-            <th>Кредит</th>
-            <th>Актив</th>
-            <th>Пассив</th>
+            <th><b>Б/сч</b></th>
+            <th><b>Актив</b></th>
+            <th><b>Пассив</b></th>
+            <th><b>Дебет</b></th>
+            <th><b>Кредит</b></th>
+            <th><b>Актив</b></th>
+            <th><b>Пассив</b></th>
         </tr>
         </table>
     @{
@@ -79,6 +79,7 @@ function f(fileName)
             return;
         }
     }
+</div>
     <table align="center" width="100%">
     @foreach (var rowClass in excelFile.GetClasses())
     {
@@ -116,4 +117,3 @@ function f(fileName)
             </tr>
 
     </table>
-</div>

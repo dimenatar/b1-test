@@ -1,4 +1,4 @@
-﻿using ClosedXML.Excel;
+﻿using Aspose.Cells;
 using MySqlConnector;
 
 namespace Task2.Scripts
@@ -8,32 +8,34 @@ namespace Task2.Scripts
         public static ExcelFile Parse(string path, string fileName)
         {
             ExcelFile excelFile = new ExcelFile(fileName);
-            using (XLWorkbook workBook = new XLWorkbook(path))
-            {
-                IXLWorksheet workSheet = workBook.Worksheet(1);
-                var rows = workSheet.Rows().ToList();
 
+            using (Workbook book = new Workbook(path))
+            {
+                var sheet = book.Worksheets[0];
+                var rowCount = sheet.Cells.MaxDataRow;
+                var cells = sheet.Cells;
                 int classIndex = 1;
 
-                var rowClassName = rows[8].Cell(1).Value.ToString();
+                //var rowClassName = rows[8].Cell(1).Value.ToString();
+                var cell = sheet.Cells[8, 0];
+                var rowClassName = sheet.Cells[8, 0].Value.ToString();
 
                 RowClass rowClass = new RowClass(classIndex, rowClassName.Substring(rowClassName.IndexOf(rowClassName.LastOrDefault(c => c >= '0' && c <= '9'))+2));
 
-                for (int i = 9; i < rows.Count; i++)
+                for (int i = 9; i < rowCount; i++)
                 {
-                    var excelRow = rows[i];
-                    var type = excelRow.Cell(2).Value.GetType();
+                    var c = cells.Rows[i];
 
-                    if (double.TryParse(rows[i].Cell(1).Value.ToString(), out double value1))
+                    if (double.TryParse(cells[i, 0].Value.ToString(), out double value1))
                     {
-                        Row row = new Row(GetTruncatedValue(rows[i].Cell(1).Value), GetTruncatedValue(rows[i].Cell(2).Value), GetTruncatedValue(rows[i].Cell(3).Value), GetTruncatedValue(rows[i].Cell(4).Value), GetTruncatedValue(rows[i].Cell(5).Value), GetTruncatedValue(rows[i].Cell(6).Value), GetTruncatedValue(rows[i].Cell(7).Value));
+                        Row row = new Row(GetTruncatedValue(cells[i, 0].Value), GetTruncatedValue(cells[i, 1].Value), GetTruncatedValue(cells[i, 2].Value), GetTruncatedValue(cells[i, 3].Value), GetTruncatedValue(cells[i, 4].Value), GetTruncatedValue(cells[i, 5].Value), GetTruncatedValue(sheet.Cells[i, 6].Value));
                         rowClass.AddRow(row);
                     }
-                    else if (!double.TryParse(rows[i].Cell(2).Value.ToString(), out double value2))
+                    else if (cells[i, 1].Value == null)
                     {
                         classIndex++;
                         excelFile.AddRowClass(rowClass);
-                        rowClassName = rows[i].Cell(1).Value.ToString();
+                        rowClassName = cells[i, 0].Value.ToString();
 
                         if (rowClassName.Where(c => c >= '0' && c <= '9').Count() > 0)
                         {
@@ -41,6 +43,7 @@ namespace Task2.Scripts
                         }
                     }
                 }
+                excelFile.AddRowClass(rowClass);
             }
 
             return excelFile;

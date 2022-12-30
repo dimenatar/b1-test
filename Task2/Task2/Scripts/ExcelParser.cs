@@ -14,7 +14,10 @@ namespace Task2.Scripts
                 var rows = workSheet.Rows().ToList();
 
                 int classIndex = 1;
-                RowClass rowClass = new RowClass(classIndex);
+
+                var rowClassName = rows[8].Cell(1).Value.ToString();
+
+                RowClass rowClass = new RowClass(classIndex, rowClassName.Substring(rowClassName.IndexOf(rowClassName.LastOrDefault(c => c >= '0' && c <= '9'))+2));
 
                 for (int i = 9; i < rows.Count; i++)
                 {
@@ -30,7 +33,12 @@ namespace Task2.Scripts
                     {
                         classIndex++;
                         excelFile.AddRowClass(rowClass);
-                        rowClass = new RowClass(classIndex);
+                        rowClassName = rows[i].Cell(1).Value.ToString();
+
+                        if (rowClassName.Where(c => c >= '0' && c <= '9').Count() > 0)
+                        {
+                            rowClass = new RowClass(classIndex, rowClassName.Substring(rowClassName.IndexOf(rowClassName.LastOrDefault(c => c >= '0' && c <= '9')) + 2));
+                        }
                     }
                 }
             }
@@ -57,7 +65,7 @@ namespace Task2.Scripts
                 command.Parameters.Add("ActiveIncome", System.Data.DbType.Double);
                 command.Parameters.Add("PassiveIncome", System.Data.DbType.Double);
                 command.Parameters.Add("Debet", System.Data.DbType.Double);
-                command.Parameters.Add("Credit", System.Data.DbType.Double);
+                command.Parameters.Add("Credet", System.Data.DbType.Double);
                 command.Parameters.Add("ActiveOutcome", System.Data.DbType.Double);
                 command.Parameters.Add("PassiveOutcome", System.Data.DbType.Double);
 
@@ -78,7 +86,7 @@ namespace Task2.Scripts
                         command.CommandText = "SELECT LAST_INSERT_ID()";
                         insertedIncomeID = Convert.ToInt32(command.ExecuteScalar());
 
-                        command.CommandText = $"INSERT INTO `turns` VALUE (default, @'Debet', @'Credit')";
+                        command.CommandText = $"INSERT INTO `turns` VALUE (default, @'Debet', @'Credet')";
                         command.Parameters["Debet"].Value = row.debet;
                         command.Parameters["Credet"].Value = row.credit;
                         command.ExecuteNonQuery();
@@ -111,11 +119,12 @@ namespace Task2.Scripts
 
 
                 // this awful query
-                command.CommandText = $"SELECT record.BankAccNumber, incomebalance.Active, incomebalance.Passive, turns.Debit, turns.Credit, outcomebalance.Active, outcomebalance.Passive, class.ClassOrder FROM record inner join incomebalance on incomebalance.ID = record.IncomeBalanceID inner join turns on record.TurnsID = turns.ID INNER join outcomebalance on record.OutcomeBalanceID = outcomebalance.ID INNER join files on files.ID = record.FileID INNER JOIN class on record.ClassID = class.ID WHERE files.FileName like '{fileName}';";
+                command.CommandText = $"SELECT record.BankAccNumber, incomebalance.Active, incomebalance.Passive, turns.Debit, turns.Credit, outcomebalance.Active, outcomebalance.Passive, class.ClassOrder, class.Name FROM record inner join incomebalance on incomebalance.ID = record.IncomeBalanceID inner join turns on record.TurnsID = turns.ID INNER join outcomebalance on record.OutcomeBalanceID = outcomebalance.ID INNER join files on files.ID = record.FileID INNER JOIN class on record.ClassID = class.ID WHERE files.FileName like '{fileName}';";
                 MySqlDataReader reader = await command.ExecuteReaderAsync();
                 int rowClassIndex = 1;
 
-                RowClass rowClass = new RowClass(rowClassIndex);
+                //RowClass rowClass = new RowClass(rowClassIndex);
+                RowClass rowClass = null;
 
                 while (await reader.ReadAsync())
                 {
@@ -124,22 +133,31 @@ namespace Task2.Scripts
                     //command.CommandText = $"SELECT ClassOrder FROM class where ID = {reader.GetInt32(7)};";
                     int currentRowClassIndex = reader.GetInt32(7);
 
+                    if (rowClass== null)
+                    {
+                        rowClass = new RowClass(1, reader.GetString(8));
+                    }
+
                     if (currentRowClassIndex > rowClassIndex)
                     {
                         excelFile.AddRowClass(rowClass);
 
                         rowClassIndex++;
-                        rowClass = new RowClass(rowClassIndex);
+                        rowClass = new RowClass(rowClassIndex, reader.GetString(8));
                     }
 
                     rowClass.AddRow(row);
 
                 }
+                excelFile.AddRowClass(rowClass);
             }
 
             return excelFile;
         }
-    }
 
-    //SELECT record.BackAccNumber, incomebalance.Active, incomebalance.Passive, turns.Debit, turns.Credit, outcomebalance.Active, outcome.Passive FROM record inner join on incomebalance.ID = record.IncomeBalanceID inner join turns on record.TurnsID = turns.ID INNER join outcomebalance on record.OutcomeBalanceID = outcomebalance.ID INNER join files on files.ID = record.FileID WHERE files.FileName like 'test';
+        private static double GetTruncatedValue(object value)
+        {
+            return Math.Round(Convert.ToDouble(value), 2);
+        }
+    }
 }

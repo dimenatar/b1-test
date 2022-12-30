@@ -4,13 +4,15 @@
     {
         public List<Row> Rows { get; }
 
+        public string PreviewText { get; private set; }
         public int Class { get; private set; }
 
-        public RowClass(int rowClass)
+        public RowClass(int rowClass, string previewText)
         {
             Rows = new List<Row>();
 
             Class = rowClass;
+            PreviewText = previewText;
         }
 
         public void AddRow(Row row)
@@ -20,32 +22,32 @@
 
         public double GetActiveIncomeSum()
         {
-            return Rows.Select(row => row.activeIncome).Sum();
+            return Rows.Where(row => row.number >= 100).Select(row => row.activeIncome).Sum();
         }
 
         public double GetPassiveIncomeSum()
         {
-            return Rows.Select(row => row.passiveIncome).Sum();
+            return Rows.Where(row => row.number >= 100).Select(row => row.passiveIncome).Sum();
         }
 
         public double GetDebetSum()
         {
-            return Rows.Select(row => row.debet).Sum();
+            return Rows.Where(row => row.number >= 100).Select(row => row.debet).Sum();
         }
 
         public double GetCreditSum()
         {
-            return Rows.Select(row => row.credit).Sum();
+            return Rows.Where(row => row.number >= 100).Select(row => row.credit).Sum();
         }
 
         public double GetActiveOutcomeSum()
         {
-            return Rows.Select(row => row.activeOutcome).Sum();
+            return Rows.Where(row => row.number >= 100).Select(row => row.activeOutcome).Sum();
         }
 
         public double GetPassiveOutcomeSum()
         {
-            return Rows.Select(row => row.passiveOutcome).Sum();
+            return Rows.Where(row => row.number >= 100).Select(row => row.passiveOutcome).Sum();
         }
     }
 }

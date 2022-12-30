@@ -79,11 +79,10 @@ function f(fileName)
             return;
         }
     }
-    @excelFile.FileName
     <table align="center" width="100%">
     @foreach (var rowClass in excelFile.GetClasses())
     {
-        
+        <tr><td colspan="7"><b>КЛАСС @rowClass.Class @rowClass.PreviewText</b></td></tr>
         @foreach (var row in rowClass.Rows)
         {
             <tr>
@@ -96,7 +95,25 @@ function f(fileName)
             <td>@row.passiveOutcome</td>
             </tr>
         }
-        
+        <tr>
+            <td><b>ПО КЛАССУ</b></td>
+            <td><b>@rowClass.GetActiveIncomeSum()</b></td>
+            <td><b>@rowClass.GetPassiveIncomeSum()</b></td>
+            <td><b>@rowClass.GetDebetSum()</b></td>
+            <td><b>@rowClass.GetCreditSum()</b></td>
+            <td><b>@rowClass.GetActiveOutcomeSum()</b></td>
+            <td><b>@rowClass.GetPassiveOutcomeSum()</b></td>
+        </tr>
     }
+            <tr>
+            <td><b>БАЛАНС</b></td>
+            <td><b>@excelFile.GetActiveIncomeSum()</b></td>
+            <td><b>@excelFile.GetPassiveIncomeSum()</b></td>
+            <td><b>@excelFile.GetDebetSum()</b></td>
+            <td><b>@excelFile.GetCreditSum()</b></td>
+            <td><b>@excelFile.GetActiveOutcomeSum()</b></td>
+            <td><b>@excelFile.GetPassiveOutcomeSum()</b></td>
+            </tr>
+
     </table>
 </div>

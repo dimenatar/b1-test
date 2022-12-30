@@ -27,13 +27,8 @@ namespace FileUpload.Controllers
 
         public IActionResult ExcelPresentation()
         {
-            var a = TempData["Files"];
-            if (a != null)
-            {
-                var b = a as IEnumerable<string>;
-                return View(new ExcelPresentationModel { UploadedFiles = b.ToList() });
-            }
-            return View(new ExcelPresentationModel { UploadedFiles = new List<string>()});
+            ViewData["ExcelFile"] = null;
+            return View();
         }
 
         [HttpGet]
@@ -57,10 +52,9 @@ namespace FileUpload.Controllers
                     }
                     _fileNames.Add(_FileName);
 
-                    //ExcelParser.SendExcelToDB(ExcelParser.Parse(_path, _FileName));
+                    ExcelParser.SendExcelToDB(ExcelParser.Parse(_path, _FileName));
                 }
                 ViewBag.Message = "File Uploaded Successfully!!";
-
                 ViewData["Files"] = _fileNames;
                 TempData["Files"] = _fileNames;
                 return View(_fileNames);

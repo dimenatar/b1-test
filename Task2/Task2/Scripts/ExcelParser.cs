@@ -43,7 +43,7 @@ namespace Task2.Scripts
             using (MySqlConnection connection = new MySqlConnection("server=localhost;port=3306;username=root;password=;database=task2"))
             {
                 connection.Open();
-                var data = excelFile.GetClasses();
+                var classes = excelFile.GetClasses();
                 int insertedIncomeID, insertedOutcomeID, insertedTurnID, insertedFileID;
 
                 MySqlCommand command = new MySqlCommand();
@@ -54,27 +54,40 @@ namespace Task2.Scripts
                 command.CommandText = "SELECT LAST_INSERT_ID()";
                 insertedFileID = Convert.ToInt32(command.ExecuteScalar());
 
+                command.Parameters.Add("ActiveIncome", System.Data.DbType.Double);
+                command.Parameters.Add("PassiveIncome", System.Data.DbType.Double);
+                command.Parameters.Add("Debet", System.Data.DbType.Double);
+                command.Parameters.Add("Credit", System.Data.DbType.Double);
+                command.Parameters.Add("ActiveOutcome", System.Data.DbType.Double);
+                command.Parameters.Add("PassiveOutcome", System.Data.DbType.Double);
 
-                for (int i = 0; i < data.Count; i++)
+
+                for (int i = 0; i < classes.Count; i++)
                 {
                     //insert income
-                    var rowclass = data[i];
+                    var rowclass = classes[i];
 
                     for (int j = 0; j < rowclass.Rows.Count; j++)
                     {
                         var row = rowclass.Rows[j];
 
-                        command.CommandText = $"INSERT INTO `incomebalance` VALUE (default, '{row.activeIncome}', '{row.passiveIncome}')";
+                        command.CommandText = $"INSERT INTO `incomebalance` VALUE (default, @'ActiveIncome', @'PassiveIncome')";
+                        command.Parameters["ActiveIncome"].Value = row.activeIncome;
+                        command.Parameters["PassiveIncome"].Value = row.passiveIncome;
                         command.ExecuteNonQuery();
                         command.CommandText = "SELECT LAST_INSERT_ID()";
                         insertedIncomeID = Convert.ToInt32(command.ExecuteScalar());
 
-                        command.CommandText = $"INSERT INTO `turns` VALUE (default, '{row.debet}', '{row.credit}')";
+                        command.CommandText = $"INSERT INTO `turns` VALUE (default, @'Debet', @'Credit')";
+                        command.Parameters["Debet"].Value = row.debet;
+                        command.Parameters["Credet"].Value = row.credit;
                         command.ExecuteNonQuery();
                         command.CommandText = "SELECT LAST_INSERT_ID()";
                         insertedTurnID = Convert.ToInt32(command.ExecuteScalar());
 
-                        command.CommandText = $"INSERT INTO `outcomebalance` VALUE (default, '{row.activeOutcome}', '{row.passiveOutcome}')";
+                        command.CommandText = $"INSERT INTO `outcomebalance` VALUE (default, @'ActiveOutcome', @'PassiveOutcome')";
+                        command.Parameters["ActiveOutcome"].Value = row.activeOutcome;
+                        command.Parameters["PassiveOutcome"].Value = row.passiveOutcome;
                         command.ExecuteNonQuery();
                         command.CommandText = "SELECT LAST_INSERT_ID()";
                         insertedOutcomeID = Convert.ToInt32(command.ExecuteScalar());
@@ -85,7 +98,7 @@ namespace Task2.Scripts
             }
         }
 
-        public static ExcelFile GetDataFromDB(string fileName)
+        public static async Task<ExcelFile> GetDataFromDB(string fileName)
         {
             ExcelFile excelFile = new ExcelFile(fileName);
 
@@ -99,12 +112,12 @@ namespace Task2.Scripts
 
                 // this awful query
                 command.CommandText = $"SELECT record.BankAccNumber, incomebalance.Active, incomebalance.Passive, turns.Debit, turns.Credit, outcomebalance.Active, outcomebalance.Passive, class.ClassOrder FROM record inner join incomebalance on incomebalance.ID = record.IncomeBalanceID inner join turns on record.TurnsID = turns.ID INNER join outcomebalance on record.OutcomeBalanceID = outcomebalance.ID INNER join files on files.ID = record.FileID INNER JOIN class on record.ClassID = class.ID WHERE files.FileName like '{fileName}';";
-                MySqlDataReader reader = command.ExecuteReader();
+                MySqlDataReader reader = await command.ExecuteReaderAsync();
                 int rowClassIndex = 1;
 
                 RowClass rowClass = new RowClass(rowClassIndex);
 
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
                     Row row = new Row(reader.GetInt32(0), reader.GetDouble(1), reader.GetDouble(2), reader.GetDouble(3), reader.GetDouble(4), reader.GetDouble(5), reader.GetDouble(6));
 
@@ -125,21 +138,6 @@ namespace Task2.Scripts
             }
 
             return excelFile;
-        }
-
-        public static bool IsNumber(this object value)
-        {
-            return value is sbyte
-                    || value is byte
-                    || value is short
-                    || value is ushort
-                    || value is int
-                    || value is uint
-                    || value is long
-                    || value is ulong
-                    || value is float
-                    || value is double
-                    || value is decimal;
         }
     }
 

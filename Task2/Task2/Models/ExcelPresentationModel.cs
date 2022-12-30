@@ -4,7 +4,7 @@ namespace Task2.Models
 {
     public class ExcelPresentationModel
     {
-        public List<string> UploadedFiles { get; set; } = new List<string>();
-        public ExcelFile ExcelFile { get; set; }
+        public List<string> Files { get; set; }
+        public ExcelFile ExcelFile { get; set; } = new ExcelFile("name");
     }
 }

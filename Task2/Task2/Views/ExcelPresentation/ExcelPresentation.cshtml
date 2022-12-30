@@ -1,5 +1,7 @@
-﻿@model Task2.Models.ExcelPresentationModel
-    <h2>Tap on file name to preview data from db</h2>
+﻿@using Task2.Scripts;
+@model Task2.Models.ExcelPresentationModel
+
+<h2>Tap on file name to preview data from db</h2>
 
 <script>
 function f(fileName)
@@ -11,14 +13,21 @@ function f(fileName)
         console.log(fff);
         $.ajax({
             type: "POST",
-            url: '@Url.Action("GetFile", "ExcelPresentation")',
+            url: '@Url.Action("ExcelPresentation", "ExcelPresentation")',
             contentType: "application/json; charset=utf-8",
             //data: { "name": 'fileName' }, //json,
             //data: { "name": 'fileName' },
             data: JSON.stringify(fff),
             dataType: "json",
-            success: function (response) {
+            success: function (response) 
+            {
+                console.log("123");
                 alert(response);
+            },
+            error: function(jqXHR, text, error)
+            {
+                //console.log(jqXHR.responseText);
+                $("html").html(jqXHR.responseText);
             }
         });
 }
@@ -26,8 +35,11 @@ function f(fileName)
 <script src="_framework/blazor.webassembly.js"></script>
 
 <div>
-
-        @foreach (var item in @Model.UploadedFiles)
+        @{
+            var files = Model.Files;
+        }
+        @if (files != null)
+        @foreach (var item in files)
         {
             <div class="button-item">
 
@@ -60,5 +72,31 @@ function f(fileName)
             <th>Пассив</th>
         </tr>
         </table>
-      
+    @{
+        var excelFile = ViewBag.ExcelFile as ExcelFile;
+        if (excelFile == null) 
+        {
+            return;
+        }
+    }
+    @excelFile.FileName
+    <table align="center" width="100%">
+    @foreach (var rowClass in excelFile.GetClasses())
+    {
+        
+        @foreach (var row in rowClass.Rows)
+        {
+            <tr>
+            <td>@row.number</td>    
+            <td>@row.activeIncome</td>
+            <td>@row.passiveIncome</td>
+            <td>@row.debet</td>
+            <td>@row.credit</td>
+            <td>@row.activeOutcome</td>
+            <td>@row.passiveOutcome</td>
+            </tr>
+        }
+        
+    }
+    </table>
 </div>

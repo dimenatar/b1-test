@@ -12,7 +12,9 @@
 
   <ItemGroup>
     <PackageReference Include="ClosedXML.Extensions.Mvc" Version="0.4.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.1" />
     <PackageReference Include="MySqlConnector" Version="2.2.4" />
+    <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.Web.Services.Description" Version="4.10.0" />
   </ItemGroup>
